@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.account">
+    <!-- 한개 조회 -->
+    <select id="selectOne" parameterType="String" resultType="accountDTO">
+        select *
+        from helperAccount
+        where id = #{id};
+    </select>
+
+    <!-- 리스트 조회 -->
+    <select id="selectList" parameterType="java.util.Map" resultType="accountDTO">
+        <![CDATA[
+        select *
+        from (select ROWNUM as rn, tt.* from (select * from helperAccount order by createTime asc) tt)
+        where rn >= #{startNum}
+          and rn <= #{endNum};
+        ]]>
+    </select>
+
+    <!-- 데이터 갯수 조회 -->
+    <select id="totalA" resultType="int">
+        select count(*) as cnt
+        from helperAccount;
+    </select>
+
+    <!-- 회원 추가 -->
+    <insert id="insert" parameterType="accountDTO">
+        insert into helperAccount
+        values (#{id}, #{pwd}, #{name}, #{accountType}, #{addr},
+                #{tel}, #{gender}, sysdate, #{photo})
+    </insert>
+
+    <!-- 회원 삭제 -->
+    <delete id="delete" parameterType="String">
+        delete helperAccount
+        where id = #{id}
+    </delete>
+
+    <!-- 회원정보 수정 -->
+    <update id="modify" parameterType="accountDTO">
+        update helperAccount
+        set pwd         = #{pwd},
+            name        = #{name},
+            accountType = #{accountType},
+            addr        = #{addr},
+            tel         = #{tel},
+            gender      = #{gender},
+            photo       = #{photo}
+        where id = #{id}
+    </update>
+</mapper>
